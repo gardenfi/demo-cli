@@ -1,0 +1,21 @@
+{
+  "name": "swapper",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/yargs": "^17.0.32"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "bin": {
+    "swapper": "./index.ts"
+  },
+  "dependencies": {
+    "@catalogfi/wallets": "^0.2.35",
+    "@gardenfi/core": "^0.1.5",
+    "@gardenfi/orderbook": "^0.1.4",
+    "yargs": "^17.7.2"
+  }
+}
