@@ -9,7 +9,7 @@ import {
 import { JsonRpcProvider, Wallet } from "ethers";
 import { Assets, parseStatus, Actions } from "@gardenfi/orderbook";
 
-import { writeFileSync } from "fs";
+import { writeFileSync, readFileSync, existsSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
 
@@ -17,8 +17,12 @@ import { ivar, ccreator } from "./src/command.ts";
 import { getEvmWallet, getGarden, readJsonFileSync } from "./src/utility.ts";
 import { KeyError, WalletError, AmountError } from "./src/errors.ts";
 
+if (!existsSync(join(homedir(), ".swapper_api_key"))) {
+    throw new Error("API_KEY not found, try running ./setup_key.sh <API_KEY> in the swapper dir");
+}
+
 // Constants
-const API_KEY = "";
+const API_KEY = readFileSync(join(homedir(), ".swapper_api_key"),"utf-8");
 const RPC_PROVIDER_URL = `https://sepolia.gateway.tenderly.co/${API_KEY}`;
 const ETHEREUM_PROVIDER = new JsonRpcProvider(RPC_PROVIDER_URL);
 const BITCOIN_PROVIDER = new BitcoinProvider(BitcoinNetwork.Testnet);
