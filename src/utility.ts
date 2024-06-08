@@ -9,51 +9,48 @@ import { WalletError } from "./errors.ts";
 import { type DotConfig } from "./types.ts";
 
 // Utility Functions
-function readJsonFileSync(DOT_CONFIG_PATH: string): DotConfig {
-    createDotConfig(DOT_CONFIG_PATH);
-    const fileContent = readFileSync(DOT_CONFIG_PATH, "utf-8");
+function readJsonFileSync(dotConfigPath: string): DotConfig {
+    createDotConfig(dotConfigPath);
+    const fileContent = readFileSync(dotConfigPath, "utf-8");
     return JSON.parse(fileContent);
 }
 
-function createDotConfig(DOT_CONFIG_PATH: string) {
-    if (existsSync(DOT_CONFIG_PATH)) return;
-    writeFileSync(DOT_CONFIG_PATH, JSON.stringify({}));
-    console.info(`${DOT_CONFIG_PATH} created!`);
+function createDotConfig(dotConfigPath: string) {
+    if (existsSync(dotConfigPath)) return;
+    writeFileSync(dotConfigPath, JSON.stringify({}));
+    console.info(`${dotConfigPath} created!`);
 }
 
-function getEvmWallet(
-    dotConfig: DotConfig,
-    ETHEREUM_PROVIDER: JsonRpcProvider
-) {
+function getEvmWallet(dotConfig: DotConfig, ethereumProvider: JsonRpcProvider) {
     if (!dotConfig.evmPrivateKey) throw new WalletError();
 
-    const wallet = new Wallet(dotConfig.evmPrivateKey, ETHEREUM_PROVIDER);
+    const wallet = new Wallet(dotConfig.evmPrivateKey, ethereumProvider);
     return new EVMWallet(wallet);
 }
 
 function getBitcoinWallet(
     dotConfig: DotConfig,
-    BITCOIN_PROVIDER: BitcoinProvider
+    bitcoinProvider: BitcoinProvider
 ) {
     if (!dotConfig.bitcoinPrivateKey) throw new WalletError();
-    return BitcoinWallet.fromWIF(dotConfig.bitcoinPrivateKey, BITCOIN_PROVIDER);
+    return BitcoinWallet.fromWIF(dotConfig.bitcoinPrivateKey, bitcoinProvider);
 }
 
 async function getGarden(
     dotConfig: DotConfig,
-    ETHEREUM_PROVIDER: JsonRpcProvider,
-    BITCOIN_PROVIDER: BitcoinProvider
+    ethereumProvider: JsonRpcProvider,
+    bitcoinProvider: BitcoinProvider
 ) {
     if (!dotConfig.evmPrivateKey) throw new WalletError();
 
     const orderbook = await Orderbook.init({
         url: "https://stg-test-orderbook.onrender.com/",
-        signer: new Wallet(dotConfig.evmPrivateKey, ETHEREUM_PROVIDER),
+        signer: new Wallet(dotConfig.evmPrivateKey, ethereumProvider),
     });
 
     const wallets = {
-        [Chains.bitcoin_testnet]: getBitcoinWallet(dotConfig, BITCOIN_PROVIDER),
-        [Chains.ethereum_sepolia]: getEvmWallet(dotConfig, ETHEREUM_PROVIDER),
+        [Chains.bitcoin_testnet]: getBitcoinWallet(dotConfig, bitcoinProvider),
+        [Chains.ethereum_sepolia]: getEvmWallet(dotConfig, ethereumProvider),
     };
 
     return new GardenJS(orderbook, wallets);
