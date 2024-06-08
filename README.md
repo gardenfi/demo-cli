@@ -57,3 +57,7 @@ swapper createbitcoinwallet --privatekey=<PRIVATE_KEY>
 ```
 ![createbitcoinwallet](https://github.com/gardenfi/swapper-cli/assets/162546266/8658441e-69d4-4d2d-acb4-e2be5f720d50)
 
+```bash
+swapper swapwbtctobtc --amount=0.0001
+```
+![swapwbtctobtc](https://github.com/gardenfi/swapper-cli/assets/162546266/f66a5222-1889-48be-a0f3-bae42b42d526)
