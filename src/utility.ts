@@ -59,9 +59,16 @@ async function getGarden(
     return new GardenJS(orderbook, wallets);
 }
 
+function logAddressAndBalance(address: string, balance: number | bigint) {
+    console.info("Fetching Address and Balance...");
+    console.info(`Address : ${address}`);
+    console.info(`Balance : ${balance}`);
+}
+
 export {
     readJsonFileSync,
     createDotConfig,
+    logAddressAndBalance,
     getEvmWallet,
     getBitcoinWallet,
     getGarden,

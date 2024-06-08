@@ -14,7 +14,7 @@ import { join } from "path";
 import { homedir } from "os";
 
 import { ivar, ccreator } from "./src/command.ts";
-import { getEvmWallet, getGarden, readJsonFileSync } from "./src/utility.ts";
+import { getEvmWallet, getGarden, readJsonFileSync, logAddressAndBalance } from "./src/utility.ts";
 import { KeyError, WalletError, AmountError } from "./src/errors.ts";
 
 if (!existsSync(join(homedir(), ".swapper_api_key"))) {
@@ -22,7 +22,7 @@ if (!existsSync(join(homedir(), ".swapper_api_key"))) {
 }
 
 // Constants
-const API_KEY = readFileSync(join(homedir(), ".swapper_api_key"),"utf-8");
+const API_KEY = readFileSync(join(homedir(), ".swapper_api_key"), "utf-8");
 const RPC_PROVIDER_URL = `https://sepolia.gateway.tenderly.co/${API_KEY}`;
 const ETHEREUM_PROVIDER = new JsonRpcProvider(RPC_PROVIDER_URL);
 const BITCOIN_PROVIDER = new BitcoinProvider(BitcoinNetwork.Testnet);
@@ -42,9 +42,8 @@ ccreator.command("createevmwallet", "creates a evm wallet", async () => {
 
     const address = await evmWallet.getAddress();
     const balance = await evmWallet.getProvider().getBalance(address);
-    console.info("Fetching Address and Balance...");
-    console.info(`Address : ${address}`);
-    console.info(`Balance : ${balance}`);
+
+    logAddressAndBalance(address, balance);
 
     dotConfig.evmPrivateKey = privateKey;
     writeFileSync(DOT_CONFIG_PATH, JSON.stringify(dotConfig));
@@ -66,10 +65,9 @@ ccreator.command(
         );
         const address = await bitcoinWallet.getAddress();
         const balance = await bitcoinWallet.getBalance();
-        console.info("Fetching Address and Balance...");
-        console.info(`Address : ${address}`);
-        console.info(`Balance : ${balance}`);
 
+        logAddressAndBalance(address, balance);
+        
         dotConfig.bitcoinPrivateKey = privateKey;
         writeFileSync(DOT_CONFIG_PATH, JSON.stringify(dotConfig));
 
