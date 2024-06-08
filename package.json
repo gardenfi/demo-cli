@@ -10,7 +10,7 @@
     "typescript": "^5.0.0"
   },
   "bin": {
-    "swapper": "./index.ts"
+    "swapper": "./src/index.ts"
   },
   "dependencies": {
     "@catalogfi/wallets": "^0.2.35",

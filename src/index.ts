@@ -13,15 +13,15 @@ import { writeFileSync, readFileSync, existsSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
 
-import { ivar, ccreator } from "./src/command.ts";
+import { ivar, ccreator } from "./command.ts";
 import {
     getEVMWallet,
     getGarden,
     readJsonFileSync,
     logAddressAndBalance,
     getBitcoinWallet,
-} from "./src/utility.ts";
-import { KeyError, WalletError, AmountError } from "./src/errors.ts";
+} from "./utility.ts";
+import { KeyError, WalletError, AmountError } from "./errors.ts";
 
 if (!existsSync(join(homedir(), ".swapper_api_key"))) {
     throw new Error(
