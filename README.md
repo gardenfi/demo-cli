@@ -50,6 +50,7 @@ chmod +x setup_key.sh
 ```bash
 swapper createevmwallet --privatekey=<PRIVATE_KEY>
 ``` 
+
 ![createevmwallet](https://github.com/gardenfi/swapper-cli/assets/162546266/ae5b5d56-3c18-49b3-a062-8a052b893da4)
 
 ```bash
@@ -60,4 +61,4 @@ swapper createbitcoinwallet --privatekey=<PRIVATE_KEY>
 ```bash
 swapper swapwbtctobtc --amount=0.0001
 ```
-![swapwbtctobtc](https://github.com/gardenfi/swapper-cli/assets/162546266/f66a5222-1889-48be-a0f3-bae42b42d526)
+![swapwbtctobtc](https://github.com/gardenfi/swapper-cli/assets/162546266/6725458e-e523-4659-b275-bdeedbb303e4)
