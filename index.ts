@@ -14,11 +14,19 @@ import { join } from "path";
 import { homedir } from "os";
 
 import { ivar, ccreator } from "./src/command.ts";
-import { getEvmWallet, getGarden, readJsonFileSync, logAddressAndBalance } from "./src/utility.ts";
+import {
+    getEVMWallet,
+    getGarden,
+    readJsonFileSync,
+    logAddressAndBalance,
+    getBitcoinWallet,
+} from "./src/utility.ts";
 import { KeyError, WalletError, AmountError } from "./src/errors.ts";
 
 if (!existsSync(join(homedir(), ".swapper_api_key"))) {
-    throw new Error("API_KEY not found, try running ./setup_key.sh <API_KEY> in the swapper dir");
+    throw new Error(
+        "API_KEY not found, try running ./setup_key.sh <API_KEY> in the swapper dir"
+    );
 }
 
 // Constants
@@ -67,7 +75,7 @@ ccreator.command(
         const balance = await bitcoinWallet.getBalance();
 
         logAddressAndBalance(address, balance);
-        
+
         dotConfig.bitcoinPrivateKey = privateKey;
         writeFileSync(DOT_CONFIG_PATH, JSON.stringify(dotConfig));
 
@@ -85,16 +93,17 @@ ccreator.command(
 
 ccreator.command("swapwbtctobtc", "Swaps from WBTC to BTC", async () => {
     const { amount } = ivar;
+    const { bitcoinPrivateKey, evmPrivateKey } = dotConfig;
 
-    if (!dotConfig.bitcoinPrivateKey || !dotConfig.evmPrivateKey)
-        throw new WalletError();
+    if (!bitcoinPrivateKey || !evmPrivateKey) throw new WalletError();
     if (!amount) throw new AmountError();
 
-    const evmWallet = getEvmWallet(dotConfig, ETHEREUM_PROVIDER);
+    const evmWallet = getEVMWallet(evmPrivateKey, ETHEREUM_PROVIDER);
+    const bitcoinWallet = getBitcoinWallet(bitcoinPrivateKey, BITCOIN_PROVIDER);
     const garden = await getGarden(
-        dotConfig,
-        ETHEREUM_PROVIDER,
-        BITCOIN_PROVIDER
+        evmPrivateKey,
+        evmWallet,
+        bitcoinWallet
     );
 
     const sendAmount = amount * 1e8;

@@ -5,7 +5,6 @@ import { GardenJS } from "@gardenfi/core";
 
 import { writeFileSync, existsSync, readFileSync } from "fs";
 
-import { WalletError } from "./errors.ts";
 import { type DotConfig } from "./types.ts";
 
 // Utility Functions
@@ -21,36 +20,34 @@ function createDotConfig(dotConfigPath: string) {
     console.info(`${dotConfigPath} created!`);
 }
 
-function getEvmWallet(dotConfig: DotConfig, ethereumProvider: JsonRpcProvider) {
-    if (!dotConfig.evmPrivateKey) throw new WalletError();
-
-    const wallet = new Wallet(dotConfig.evmPrivateKey, ethereumProvider);
+function getEVMWallet(
+    evmPrivateKey: string,
+    ethereumProvider: JsonRpcProvider
+) {
+    const wallet = new Wallet(evmPrivateKey, ethereumProvider);
     return new EVMWallet(wallet);
 }
 
 function getBitcoinWallet(
-    dotConfig: DotConfig,
+    bitcoinPrivateKey: string,
     bitcoinProvider: BitcoinProvider
 ) {
-    if (!dotConfig.bitcoinPrivateKey) throw new WalletError();
-    return BitcoinWallet.fromWIF(dotConfig.bitcoinPrivateKey, bitcoinProvider);
+    return BitcoinWallet.fromWIF(bitcoinPrivateKey, bitcoinProvider);
 }
 
 async function getGarden(
-    dotConfig: DotConfig,
-    ethereumProvider: JsonRpcProvider,
-    bitcoinProvider: BitcoinProvider
+    evmPrivateKey: string,
+    evmWallet: EVMWallet,
+    bitcoinWallet: BitcoinWallet
 ) {
-    if (!dotConfig.evmPrivateKey) throw new WalletError();
-
     const orderbook = await Orderbook.init({
         url: "https://stg-test-orderbook.onrender.com/",
-        signer: new Wallet(dotConfig.evmPrivateKey, ethereumProvider),
+        signer: new Wallet(evmPrivateKey, evmWallet.getProvider()),
     });
 
     const wallets = {
-        [Chains.bitcoin_testnet]: getBitcoinWallet(dotConfig, bitcoinProvider),
-        [Chains.ethereum_sepolia]: getEvmWallet(dotConfig, ethereumProvider),
+        [Chains.bitcoin_testnet]: bitcoinWallet,
+        [Chains.ethereum_sepolia]: evmWallet,
     };
 
     return new GardenJS(orderbook, wallets);
@@ -66,7 +63,7 @@ export {
     readJsonFileSync,
     createDotConfig,
     logAddressAndBalance,
-    getEvmWallet,
+    getEVMWallet,
     getBitcoinWallet,
     getGarden,
 };
