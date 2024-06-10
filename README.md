@@ -1,5 +1,7 @@
 # Swapper CLI
 
+**Disclaimer: This document is provided as an example to help you get accustomed to using the Garden SDK. It is not intended to serve as a standard for creating CLI tools with the Garden SDK. A proper tool will take into consideration many best practices and optimizations. In the example below, we have cut a lot of corners for simplicity.**
+
 ## Getting Started
 
 ### Cloning the Repository
@@ -47,18 +49,32 @@ chmod +x setup_key.sh
 ## Running the CLI
 
 ### Creating Wallets
+**Creating an evm wallet** 
 ```bash
 swapper createevmwallet --privatekey=<PRIVATE_KEY>
 ``` 
 
 ![createevmwallet](https://github.com/gardenfi/swapper-cli/assets/162546266/ae5b5d56-3c18-49b3-a062-8a052b893da4)
 
+**Creating a bitcoin wallet**
 ```bash
 swapper createbitcoinwallet --privatekey=<PRIVATE_KEY>
 ```
 ![createbitcoinwallet](https://github.com/gardenfi/swapper-cli/assets/162546266/8658441e-69d4-4d2d-acb4-e2be5f720d50)
 
+### Swapping
+**To swap between `WBTC` to `BTC`, you can use `swapwbtctobtc`**
 ```bash
 swapper swapwbtctobtc --amount=0.0001
 ```
 ![swapwbtctobtc](https://github.com/gardenfi/swapper-cli/assets/162546266/6725458e-e523-4659-b275-bdeedbb303e4)
+
+**To swap between `BTC` to `WBTC`, you can use `swapbtctowbtc`**
+
+### Getting details
+```bash
+swapper getdetails
+```
+A utility command useful for looking up the `$HOME/.swapper_config.json` file.
+
+![carbon(5)](https://github.com/gardenfi/swapper-cli/assets/162546266/1db15518-239a-4d39-a481-31045ac818c8)
