@@ -134,4 +134,47 @@ ccreator.command("swapwbtctobtc", "Swaps from WBTC to BTC", async () => {
     });
 });
 
+ccreator.command("swapbtctowbtc", "Swaps from BTC to WBTC", async () => {
+    const { amount } = ivar;
+    const { bitcoinPrivateKey, evmPrivateKey } = dotConfig;
+
+    if (!bitcoinPrivateKey || !evmPrivateKey) throw new WalletError();
+    if (!amount) throw new AmountError();
+
+    const evmWallet = getEVMWallet(evmPrivateKey, ETHEREUM_PROVIDER);
+    const bitcoinWallet = getBitcoinWallet(bitcoinPrivateKey, BITCOIN_PROVIDER);
+    const garden = await getGarden(
+        evmPrivateKey,
+        evmWallet,
+        bitcoinWallet
+    );
+
+    const sendAmount = amount * 1e8;
+    const recieveAmount = (1 - 0.3 / 100) * sendAmount;
+
+    const orderId = await garden.swap(
+        Assets.bitcoin_testnet.BTC,
+        Assets.ethereum_sepolia.WBTC,
+        sendAmount,
+        recieveAmount
+    );
+
+    garden.subscribeOrders(await evmWallet.getAddress(), async (orders) => {
+        const order = orders.filter((order) => order.ID === orderId)[0];
+        if (!order) return;
+
+        const action = parseStatus(order);
+        if (
+            action === Actions.UserCanInitiate ||
+            action === Actions.UserCanRedeem
+        ) {
+            const swapper = garden.getSwap(order);
+            const performedAction = await swapper.next();
+            console.info(
+                `Completed Action ${performedAction.action} with transaction hash: ${performedAction.output}`
+            );
+        }
+    });
+});
+
 ccreator.parse();
