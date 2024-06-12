@@ -7,7 +7,13 @@ import {
     EVMWallet,
 } from "@catalogfi/wallets";
 import { JsonRpcProvider, Wallet } from "ethers";
-import { Assets, parseStatus, Actions } from "@gardenfi/orderbook";
+import {
+    Assets,
+    parseStatus,
+    Actions,
+    type Asset,
+    type Order,
+} from "@gardenfi/orderbook";
 
 import { writeFileSync, readFileSync, existsSync } from "fs";
 import { join } from "path";
@@ -22,6 +28,7 @@ import {
     getBitcoinWallet,
 } from "./utility.ts";
 import { KeyError, WalletError, AmountError } from "./errors.ts";
+import { sleep } from "bun";
 
 if (!existsSync(join(homedir(), ".swapper_api_key"))) {
     throw new Error(
@@ -91,35 +98,33 @@ ccreator.command(
     }
 );
 
-ccreator.command("swapwbtctobtc", "Swaps from WBTC to BTC", async () => {
-    const { amount } = ivar;
+async function swap(fromAsset: Asset, toAsset: Asset, amount: number) {
     const { bitcoinPrivateKey, evmPrivateKey } = dotConfig;
-
     if (!bitcoinPrivateKey || !evmPrivateKey) throw new WalletError();
-    if (!amount) throw new AmountError();
 
     const evmWallet = getEVMWallet(evmPrivateKey, ETHEREUM_PROVIDER);
     const bitcoinWallet = getBitcoinWallet(bitcoinPrivateKey, BITCOIN_PROVIDER);
-    const garden = await getGarden(
-        evmPrivateKey,
-        evmWallet,
-        bitcoinWallet
-    );
+    const garden = await getGarden(evmPrivateKey, evmWallet, bitcoinWallet);
 
     const sendAmount = amount * 1e8;
     const recieveAmount = (1 - 0.3 / 100) * sendAmount;
 
     const orderId = await garden.swap(
-        Assets.ethereum_sepolia.WBTC,
-        Assets.bitcoin_testnet.BTC,
+        fromAsset,
+        toAsset,
         sendAmount,
         recieveAmount
     );
 
-    garden.subscribeOrders(await evmWallet.getAddress(), async (orders) => {
-        const order = orders.filter((order) => order.ID === orderId)[0];
-        if (!order) return;
+    let order: Order | null = null;
 
+    garden.subscribeOrders(await evmWallet.getAddress(), (orders) => {
+        order = orders.filter((order) => order.ID === orderId)[0];
+    });
+
+    while (true) {
+        await sleep(500); // Time for `subscribeOrders` to update the state of orders
+        if (!order) continue;
         const action = parseStatus(order);
         if (
             action === Actions.UserCanInitiate ||
@@ -130,51 +135,29 @@ ccreator.command("swapwbtctobtc", "Swaps from WBTC to BTC", async () => {
             console.info(
                 `Completed Action ${performedAction.action} with transaction hash: ${performedAction.output}`
             );
+            garden.unsubscribeOrders();
         }
-    });
+    }
+}
+
+ccreator.command("swapwbtctobtc", "Swaps from WBTC to BTC", async () => {
+    const { amount } = ivar;
+    if (!amount) return;
+    await swap(
+        Assets.ethereum_sepolia.WBTC,
+        Assets.bitcoin_testnet.BTC,
+        amount
+    );
 });
 
 ccreator.command("swapbtctowbtc", "Swaps from BTC to WBTC", async () => {
     const { amount } = ivar;
-    const { bitcoinPrivateKey, evmPrivateKey } = dotConfig;
-
-    if (!bitcoinPrivateKey || !evmPrivateKey) throw new WalletError();
-    if (!amount) throw new AmountError();
-
-    const evmWallet = getEVMWallet(evmPrivateKey, ETHEREUM_PROVIDER);
-    const bitcoinWallet = getBitcoinWallet(bitcoinPrivateKey, BITCOIN_PROVIDER);
-    const garden = await getGarden(
-        evmPrivateKey,
-        evmWallet,
-        bitcoinWallet
-    );
-
-    const sendAmount = amount * 1e8;
-    const recieveAmount = (1 - 0.3 / 100) * sendAmount;
-
-    const orderId = await garden.swap(
+    if (!amount) return;
+    await swap(
         Assets.bitcoin_testnet.BTC,
         Assets.ethereum_sepolia.WBTC,
-        sendAmount,
-        recieveAmount
+        amount
     );
-
-    garden.subscribeOrders(await evmWallet.getAddress(), async (orders) => {
-        const order = orders.filter((order) => order.ID === orderId)[0];
-        if (!order) return;
-
-        const action = parseStatus(order);
-        if (
-            action === Actions.UserCanInitiate ||
-            action === Actions.UserCanRedeem
-        ) {
-            const swapper = garden.getSwap(order);
-            const performedAction = await swapper.next();
-            console.info(
-                `Completed Action ${performedAction.action} with transaction hash: ${performedAction.output}`
-            );
-        }
-    });
 });
 
 ccreator.parse();
