@@ -142,7 +142,7 @@ async function swap(fromAsset: Asset, toAsset: Asset, amount: number) {
 
 ccreator.command("swapwbtctobtc", "Swaps from WBTC to BTC", async () => {
     const { amount } = ivar;
-    if (!amount) return;
+    if (!amount) throw new AmountError();
     await swap(
         Assets.ethereum_sepolia.WBTC,
         Assets.bitcoin_testnet.BTC,
@@ -152,7 +152,7 @@ ccreator.command("swapwbtctobtc", "Swaps from WBTC to BTC", async () => {
 
 ccreator.command("swapbtctowbtc", "Swaps from BTC to WBTC", async () => {
     const { amount } = ivar;
-    if (!amount) return;
+    if (!amount) throw new AmountError();
     await swap(
         Assets.bitcoin_testnet.BTC,
         Assets.ethereum_sepolia.WBTC,
