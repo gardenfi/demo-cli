@@ -32,7 +32,7 @@ import { sleep } from "bun";
 
 if (!existsSync(join(homedir(), ".swapper_api_key"))) {
     throw new Error(
-        "API_KEY not found, try running ./setup_key.sh <API_KEY> in the swapper dir"
+        "API_KEY not found, try running ./setup_key.sh <API_KEY> in the swapper dir",
     );
 }
 
@@ -76,7 +76,7 @@ ccreator.command(
 
         const bitcoinWallet = BitcoinWallet.fromWIF(
             privateKey,
-            BITCOIN_PROVIDER
+            BITCOIN_PROVIDER,
         );
         const address = await bitcoinWallet.getAddress();
         const balance = await bitcoinWallet.getBalance();
@@ -87,7 +87,7 @@ ccreator.command(
         writeFileSync(DOT_CONFIG_PATH, JSON.stringify(dotConfig));
 
         console.info(`Saved to ${DOT_CONFIG_PATH}`);
-    }
+    },
 );
 
 ccreator.command(
@@ -95,7 +95,7 @@ ccreator.command(
     "gets the contents of $HOME/.swapper_config.json",
     () => {
         console.info(readJsonFileSync(DOT_CONFIG_PATH));
-    }
+    },
 );
 
 async function swap(fromAsset: Asset, toAsset: Asset, amount: number) {
@@ -113,7 +113,7 @@ async function swap(fromAsset: Asset, toAsset: Asset, amount: number) {
         fromAsset,
         toAsset,
         sendAmount,
-        recieveAmount
+        recieveAmount,
     );
 
     let order: Order | null = null;
@@ -133,9 +133,13 @@ async function swap(fromAsset: Asset, toAsset: Asset, amount: number) {
             const swapper = garden.getSwap(order);
             const performedAction = await swapper.next();
             console.info(
-                `Completed Action ${performedAction.action} with transaction hash: ${performedAction.output}`
+                `Completed Action ${performedAction.action} with transaction hash: ${performedAction.output}`,
             );
+        }
+
+        if (action === Actions.UserCanRedeem) {
             garden.unsubscribeOrders();
+            break;
         }
     }
 }
@@ -146,7 +150,7 @@ ccreator.command("swapwbtctobtc", "Swaps from WBTC to BTC", async () => {
     await swap(
         Assets.ethereum_sepolia.WBTC,
         Assets.bitcoin_testnet.BTC,
-        amount
+        amount,
     );
 });
 
@@ -156,7 +160,7 @@ ccreator.command("swapbtctowbtc", "Swaps from BTC to WBTC", async () => {
     await swap(
         Assets.bitcoin_testnet.BTC,
         Assets.ethereum_sepolia.WBTC,
-        amount
+        amount,
     );
 });
 
