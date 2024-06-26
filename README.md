@@ -1,7 +1,7 @@
 # Swapper CLI
+Swapper CLI is a simple example of how to build a command-line interface tool using the [Garden SDK](https://docs.garden.finance/developers/sdk/). This tool lets you swap between WBTC (Wrapped Bitcoin) and BTC (Bitcoin) directly from your terminal. For a step-by-step guide on how this CLI was built, refer to the [CLI tool with Garden SDK](https://docs.garden.finance/cookbook/cli-tool-with-garden-sdk) guide.
 
-**Disclaimer: This document is provided as an example to help you get accustomed to using the Garden SDK. It is not intended to serve as a standard for creating CLI tools with the Garden SDK. A proper tool will take into consideration many best practices and optimizations. In the example below, we have cut a lot of corners for simplicity.**
-
+**Disclaimer:**  This example is meant to help you get started with the Garden SDK. It is not a complete or optimized tool and does not follow all best practices.
 ## Getting Started
 
 ### Cloning the Repository
