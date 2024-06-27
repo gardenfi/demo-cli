@@ -122,13 +122,15 @@ async function swap(fromAsset: Asset, toAsset: Asset, amount: number) {
         order = orders.filter((order) => order.ID === orderId)[0];
     });
 
+    let prevAction = null;
     while (true) {
         await sleep(500); // Time for `subscribeOrders` to update the state of orders
         if (!order) continue;
         const action = parseStatus(order);
         if (
-            action === Actions.UserCanInitiate ||
-            action === Actions.UserCanRedeem
+            (action === Actions.UserCanInitiate ||
+                action === Actions.UserCanRedeem) &&
+            prevAction !== action
         ) {
             const swapper = garden.getSwap(order);
             const performedAction = await swapper.next();
@@ -141,6 +143,7 @@ async function swap(fromAsset: Asset, toAsset: Asset, amount: number) {
             garden.unsubscribeOrders();
             break;
         }
+        prevAction = action;
     }
 }
 
