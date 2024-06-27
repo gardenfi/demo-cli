@@ -13,9 +13,9 @@
     "swapper": "./src/index.ts"
   },
   "dependencies": {
-    "@catalogfi/wallets": "^0.2.35",
-    "@gardenfi/core": "^0.1.5",
-    "@gardenfi/orderbook": "^0.1.4",
+    "@catalogfi/wallets": "^0.2.43",
+    "@gardenfi/core": "^0.1.11",
+    "@gardenfi/orderbook": "^0.1.8",
     "yargs": "^17.7.2"
   }
 }
