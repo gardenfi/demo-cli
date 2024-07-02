@@ -69,6 +69,8 @@ Swap between `BTC` to `WBTC`.
 ```bash
 swapper swapbtctowbtc --amount=0.0001
 ```
+![swapbtctowbtc](https://github.com/Sushants-Git/swapper-cli/assets/100516354/2c8a458c-4235-46b3-aff1-c3f1b4499df5)
+
 
 ### Get Details
 A utility command useful for looking up the `$HOME/.swapper_config.json` file.
