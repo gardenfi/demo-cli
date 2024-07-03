@@ -72,13 +72,11 @@ Swap between **BTC** to **WBTC**.
 ```bash
 swapper swapbtctowbtc --amount=0.0001
 ```
-![swapbtctowbtc](https://github.com/Sushants-Git/swapper-cli/assets/100516354/2c8a458c-4235-46b3-aff1-c3f1b4499df5)
-
+![swapbtctowbtc](https://github.com/gardenfi/demo-cli/assets/162546266/7adb07d2-b79c-4ff6-b34a-358d41294220)
 
 ### Get Details
 A utility command useful for looking up the `$HOME/.swapper_config.json` file.
 ```bash
 swapper getdetails
 ```
-
-![carbon(5)](https://github.com/gardenfi/swapper-cli/assets/162546266/1db15518-239a-4d39-a481-31045ac818c8)
+![getdetails](https://github.com/gardenfi/demo-cli/assets/162546266/4095a1e2-ce4b-4280-be51-943ce96cc701)
