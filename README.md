@@ -47,14 +47,14 @@ chmod +x setup_key.sh
 ## Running the CLI
 
 ### Creating Wallets
-Create an evm wallet.
+Create an EVM wallet.
 ```bash
 swapper createevmwallet --privatekey=<PRIVATE_KEY>
 ``` 
 
 ![createevmwallet](https://github.com/gardenfi/swapper-cli/assets/162546266/ae5b5d56-3c18-49b3-a062-8a052b893da4)
 
-Create a bitcoin wallet.
+Create a Bitcoin wallet.
 ```bash
 swapper createbitcoinwallet --privatekey=<PRIVATE_KEY>
 ```
