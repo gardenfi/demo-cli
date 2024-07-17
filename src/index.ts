@@ -148,6 +148,7 @@ async function swap(fromAsset: Asset, toAsset: Asset, amount: number) {
 }
 
 ccreator.command("swapwbtctobtc", "Swaps from WBTC to BTC", async () => {
+    console.info("Processing please wait..");
     const { amount } = ivar;
     if (!amount) throw new AmountError();
     await swap(
@@ -158,6 +159,7 @@ ccreator.command("swapwbtctobtc", "Swaps from WBTC to BTC", async () => {
 });
 
 ccreator.command("swapbtctowbtc", "Swaps from BTC to WBTC", async () => {
+    console.info("Processing please wait..");
     const { amount } = ivar;
     if (!amount) throw new AmountError();
     await swap(
