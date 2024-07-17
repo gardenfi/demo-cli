@@ -41,7 +41,7 @@ async function getGarden(
     bitcoinWallet: BitcoinWallet
 ) {
     const orderbook = await Orderbook.init({
-        url: "https://stg-test-orderbook.onrender.com/",
+        url: "https://orderbook-testnet.garden.finance/",
         signer: new Wallet(evmPrivateKey, evmWallet.getProvider()),
     });
 
