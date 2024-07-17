@@ -148,6 +148,7 @@ async function swap(fromAsset: Asset, toAsset: Asset, amount: number) {
 }
 
 ccreator.command("swapwbtctobtc", "Swaps from WBTC to BTC", async () => {
+    console.info("Starting please wait..");
     const { amount } = ivar;
     if (!amount) throw new AmountError();
     await swap(
